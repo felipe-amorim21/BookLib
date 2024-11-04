@@ -15,7 +15,7 @@ export const Home = () => {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      height: '100vh', // Use full viewport height
+      height: '100vh', 
       textAlign: 'center',
       padding: '20px',
     }}>

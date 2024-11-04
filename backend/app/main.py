@@ -6,10 +6,10 @@ from app.config import settings
 from dotenv import load_dotenv
 import os
 
-# Load the .env file
+
 load_dotenv()
 
-# Get the database URL from environment variable
+
 database_url = os.getenv("DATABASE_URL")
 
 
@@ -20,7 +20,7 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_PREFIX}/openapi.json"
 )
 
-# CORS middleware
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],  
@@ -33,9 +33,9 @@ app.add_middleware(
     SessionMiddleware,
     secret_key= "Oe_Ef1Y38o1KSWM2R-s-Kg",
     session_cookie="session",
-    max_age=60 * 60 * 24,  # 1 day in seconds
-    same_site="lax",  # Important for security
-    https_only=False  # Set to True in production
+    max_age=60 * 60 * 24,  
+    same_site="lax",  
+    https_only=False  
 )
 
 @app.get("/")
