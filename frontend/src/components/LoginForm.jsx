@@ -54,17 +54,15 @@ export const LoginForm = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      // First, get the CSRF token from your backend
+      
       const response = await fetch('http://localhost:8000/api/v1/auth/google/init', {
         method: 'GET',
-        credentials: 'include', // Important for cookies
+        credentials: 'include',
       });
       
       if (!response.ok) {
         throw new Error('Failed to initialize Google login');
       }
-      
-      // Redirect to Google OAuth
       window.location.href = 'http://localhost:8000/api/v1/auth/google/login';
     } catch (err) {
       setError('Failed to start Google login. Please try again.');

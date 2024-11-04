@@ -14,13 +14,13 @@ from app.config import settings
 import os
 import logging
 
-# Set up logging
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-# OAuth setup with complete configuration
+
 oauth = OAuth()
 oauth.register(
     name='google',
@@ -77,7 +77,6 @@ async def login(
 async def google_init(request: Request):
     """Initialize the OAuth flow by setting up the session"""
     try:
-        # Generate and store state
         state = os.urandom(16).hex()
         request.session['oauth_state'] = state
         return JSONResponse({"status": "success", "state": state})
@@ -126,14 +125,13 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
             logger.error("Missing required user information from Google response")
             raise HTTPException(status_code=400, detail="Incomplete user information")
 
-        # Check if the user exists using google_id first
+        
         existing_user = db.query(User).filter(User.google_id == google_user_id).first()
 
         if existing_user:
             logger.info(f"User found in database: {existing_user}")
             user_id = existing_user.id
         else:
-            # If not found, check by email
             existing_user_by_email = db.query(User).filter(User.email == email).first()
 
             if existing_user_by_email:
@@ -151,16 +149,16 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
                 user_id = new_user.id
                 logger.info(f"New user created: {new_user}")
 
-        # Generate your application's access token
+    
         access_token = create_access_token(user_id)
         
-        # Create and configure the response
+
         response = RedirectResponse(url="http://localhost:5173/home")
         response.set_cookie(
             key="session",
             value=access_token,
             httponly=True,
-            secure=False,  # Set to True in production
+            secure=False,  
             samesite="lax",
             max_age=3600
         )

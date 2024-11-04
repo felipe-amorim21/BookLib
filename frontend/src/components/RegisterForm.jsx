@@ -63,8 +63,8 @@ export const RegisterForm = () => {
     <div className="flex min-h-screen items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">Create Account</CardTitle>
-          <CardDescription className="text-center">Sign up for a new account</CardDescription>
+          <CardTitle className="text-2xl font-bold text-center">Criar uma conta</CardTitle>
+          <CardDescription className="text-center">Se registre</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -82,7 +82,7 @@ export const RegisterForm = () => {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="joao@exemplo.com"
                   value={formData.email}
                   onChange={handleChange}
                   className="pl-10"
@@ -92,13 +92,13 @@ export const RegisterForm = () => {
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">Usuario</Label>
               <div className="relative">
                 <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
                   id="username"
                   type="text"
-                  placeholder="johndoe"
+                  placeholder="exemplo"
                   value={formData.username}
                   onChange={handleChange}
                   className="pl-10"
@@ -108,7 +108,7 @@ export const RegisterForm = () => {
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Senha</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
@@ -124,7 +124,7 @@ export const RegisterForm = () => {
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword">Confirmar senha</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
@@ -143,20 +143,20 @@ export const RegisterForm = () => {
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
-                'Sign Up'
+                'Cadastrar'
               )}
             </Button>
           </form>
         </CardContent>
         <CardFooter className="flex justify-center">
           <p className="text-sm text-gray-600">
-            Already have an account?{' '}
+            Já tem uma conta?{' '}
             <Button
               variant="link"
               className="p-0 text-blue-600 hover:text-blue-800"
               onClick={() => navigate('/login')}
             >
-              Sign in
+              Fazer Login
             </Button>
           </p>
         </CardFooter>

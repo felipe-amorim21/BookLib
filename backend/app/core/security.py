@@ -26,7 +26,7 @@ def get_password_hash(password: str) -> str:
 def decode_token_and_get_user_id(token: str):
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        user_id: int = payload.get("sub")  # Ensure you get the right key for user ID
+        user_id: int = payload.get("sub")  #
         return user_id
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
