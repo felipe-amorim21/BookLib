@@ -13,7 +13,6 @@ load_dotenv()
 database_url = os.getenv("DATABASE_URL")
 
 
-
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
@@ -31,12 +30,13 @@ app.add_middleware(
 
 app.add_middleware(
     SessionMiddleware,
-    secret_key= "Oe_Ef1Y38o1KSWM2R-s-Kg",
+    secret_key="Oe_Ef1Y38o1KSWM2R-s-Kg",
     session_cookie="session",
-    max_age=60 * 60 * 24,  
-    same_site="lax",  
-    https_only=False  
+    max_age=60 * 60 * 24,
+    same_site="lax",
+    https_only=False
 )
+
 
 @app.middleware("http")
 async def add_cors_headers(request: Request, call_next):
@@ -46,9 +46,11 @@ async def add_cors_headers(request: Request, call_next):
     response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     return response
 
+
 @app.get("/")
 async def read_root():
     return {"message": "Welcome to the BookReview API"}
+
 
 app.include_router(auth.router, prefix=settings.API_V1_PREFIX, tags=["auth"])
 app.include_router(api.router, prefix=settings.API_V1_PREFIX)

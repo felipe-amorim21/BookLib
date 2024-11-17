@@ -22,16 +22,16 @@ export const Home = () => {
                     return;
                 }
 
-                // Configurar o cabeçalho Authorization dependendo do tipo de token
+                
                 const authHeader = `Bearer ${token}`;
                 const response = await axios.get("http://localhost:8000/api/v1/user/me", {
                     headers: {
-                        Authorization: authHeader, // Usa o token de autenticação
+                        Authorization: authHeader, 
                     },
-                    withCredentials: true, // Envia os cookies com a requisição
+                    withCredentials: true,
                 });
 
-                setUserData(response.data); // Armazena os dados do usuário na state
+                setUserData(response.data); 
             } catch (error) {
                 console.error("Erro ao obter dados do usuário:", error);
                 setError("Falha ao carregar dados do usuário.");
@@ -39,11 +39,11 @@ export const Home = () => {
         };
 
         if (cookies.access_token) {
-            fetchUserData(); // Tenta obter dados do usuário se o token estiver presente
+            fetchUserData(); 
         } else {
             setError("Usuário não autenticado.");
         }
-    }, [cookies.access_token]); // Reexecuta quando o cookie mudar
+    }, [cookies.access_token]); 
 
     return (
         <div>
@@ -55,7 +55,7 @@ export const Home = () => {
                     <p>Nome: {userData.name}</p>
                     <p>Email: {userData.email}</p>
                     
-                    {/* Exiba outras informações do usuário conforme necessário */}
+                    {}
                 </div>
             ) : (
                 <p>Carregando dados do usuário...</p>
