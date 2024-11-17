@@ -11,11 +11,11 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');  
     if (token) {
       fetchUserData(token);
     } else {
-        const token = Cookies.get('token');
+        const token = Cookies.get('access_token');
         if (token) {
             fetchUserData(token);
         } else {

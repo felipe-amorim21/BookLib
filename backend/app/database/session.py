@@ -4,14 +4,11 @@ from sqlalchemy import create_engine
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Set up the SQLAlchemy engine
 engine = create_engine(DATABASE_URL)
 
-# Create a configured "Session" class and a Base class for models
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
