@@ -5,7 +5,7 @@ from app.routes import auth, api
 from app.config import settings
 from dotenv import load_dotenv
 import os
-
+from starlette.requests import Request
 
 load_dotenv()
 
@@ -23,7 +23,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -38,10 +38,17 @@ app.add_middleware(
     https_only=False  
 )
 
+@app.middleware("http")
+async def add_cors_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Origin"] = "http://localhost:5173"  # Ou "*" durante testes
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response
+
 @app.get("/")
 async def read_root():
     return {"message": "Welcome to the BookReview API"}
 
-# Routes
 app.include_router(auth.router, prefix=settings.API_V1_PREFIX, tags=["auth"])
 app.include_router(api.router, prefix=settings.API_V1_PREFIX)

@@ -10,21 +10,19 @@ from app.models.user import User  # Import your User model
 from dotenv import load_dotenv
 import os
 
-# Load the .env file
+
 load_dotenv()
 
-# Get the database URL from environment variable
+
 database_url = os.getenv("DATABASE_URL")
 
-# This is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
+
 config = context.config
 
-# Interpret the config file for Python logging.
+
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Add your model's MetaData object here for 'autogenerate' support
 target_metadata = Base.metadata
 
 def run_migrations_offline() -> None:
