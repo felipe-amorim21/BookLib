@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from authlib.integrations.starlette_client import OAuth
@@ -7,7 +7,7 @@ from starlette.requests import Request
 from app.models.user import User
 from app.database.session import get_db
 from app.services.auth import AuthService
-from app.core.security import create_access_token, verify_access_token, verify_google_token, decode_token_and_get_user_id
+from app.core.security import create_access_token, verify_access_token, verify_google_token
 from app.schemas.user import UserCreate, UserResponse, Token
 import os
 import logging
@@ -31,6 +31,7 @@ oauth.register(
     redirect_uri='http://localhost:8000/api/v1/auth/google/callback',
 )
 
+
 # Registro de novo usuário
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def register(user_data: UserCreate, db: Session = Depends(get_db)) -> UserResponse:
@@ -44,6 +45,7 @@ async def register(user_data: UserCreate, db: Session = Depends(get_db)) -> User
     user = await AuthService.create_user(db, user_data)
     return user
 
+
 # Login com autenticação local
 @router.post("/login", response_model=Token)
 async def login(
@@ -55,7 +57,7 @@ async def login(
     user = await AuthService.authenticate_user(
         db, form_data.username, form_data.password
     )
-    
+
     if not user:
         # Se o usuário não for encontrado, lança uma exceção
         logger.warning(f"Falha de login para o usuário {form_data.username}")
@@ -64,32 +66,29 @@ async def login(
             detail="Email ou senha incorretos",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
     # Geração do token de acesso
     access_token = create_access_token(user.id)
-    
+
     # Log de sucesso no login
     logger.info(f"Usuário {form_data.username} autenticado com sucesso.")
-    
-    # Criar o cookie com o token (httpOnly, secure, SameSite)
     response.set_cookie(
-        key="access_token", 
+        key="access_token",
         value=access_token,
-        httponly=True,  # Garantir que o cookie não seja acessado via JavaScript
-        secure=True,  # Garantir que o cookie seja enviado apenas em conexões HTTPS
-        samesite="Strict",  # A restrição para que o cookie não seja enviado em requisições cross-site
-        max_age=3600  # Tempo de expiração do cookie (1 hora)
+        httponly=True,
+        secure=True,
+        samesite="Strict",
+        max_age=3600
     )
 
     # Retornar o token como resposta
     return Token(access_token=access_token)
 
+
 @router.get("/auth/google/login")
 async def google_login(request: Request):
     try:
-        # Gerar um nonce único para o usuário
-        nonce = os.urandom(16).hex()  # Pode ser qualquer valor único
-        request.session['oauth_nonce'] = nonce  # Armazenar o nonce na sessão
+        nonce = os.urandom(16).hex()
+        request.session['oauth_nonce'] = nonce
 
         # Definir o URI de redirecionamento após login
         redirect_uri = request.url_for("google_callback")
@@ -100,13 +99,14 @@ async def google_login(request: Request):
         logging.error(f"Erro no login com Google: {str(e)}")
         raise HTTPException(status_code=500, detail="Erro no login com Google")
 
+
 @router.get('/auth/google/callback')
 async def google_callback(request: Request, db: Session = Depends(get_db)):
     """Handle the OAuth callback"""
     try:
         # Recuperar o nonce armazenado na sessão
         stored_nonce = request.session.get('oauth_nonce')
-        received_nonce = request.query_params.get('state')  # O estado que o Google nos envia
+        received_nonce = request.query_params.get('state')
 
         # Verificar se o nonce corresponde
         if stored_nonce != received_nonce:
@@ -159,6 +159,7 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+
 @router.get("/user/me")
 def get_user_data(authorization: str = Depends(oauth2_scheme)):
     # Verifica se o token é um token válido do Google
@@ -167,6 +168,7 @@ def get_user_data(authorization: str = Depends(oauth2_scheme)):
         if user:
             return user
     except Exception as e:
+        print(e)
         # Se for um erro relacionado ao token do Google, ignora e continua
         pass  # O erro é ignorado aqui porque o fluxo continua tentando o JWT depois
 
@@ -176,6 +178,7 @@ def get_user_data(authorization: str = Depends(oauth2_scheme)):
         if user:
             return user
     except Exception as e:
+        print(e)
         # Em caso de erro ao verificar o JWT, lança um erro genérico de token inválido
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido ou expirado.")
 

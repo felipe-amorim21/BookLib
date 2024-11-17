@@ -34,15 +34,15 @@ export const LoginForm = () => {
         setError("");
 
         try {
-            // Envia a requisição de login com email e senha para a API
+        
             const response = await fetch("http://localhost:8000/api/v1/login", {
                 method: "POST",
                 headers: { 
-                    "Content-Type": "application/x-www-form-urlencoded" // Formato adequado para OAuth2PasswordRequestForm
+                    "Content-Type": "application/x-www-form-urlencoded" 
                 },
                 body: new URLSearchParams({
-                    username: email,   // Envia o email como 'username'
-                    password: password // Envia a senha
+                    username: email,   
+                    password: password 
                 }),
             });
 
@@ -53,7 +53,7 @@ export const LoginForm = () => {
             const data = await response.json();
             setCookie("access_token", data.access_token, { path: "/", secure: true, sameSite: "Strict" });
             alert("Login realizado com sucesso!");
-            navigate("/home"); // Atualize a rota conforme necessário
+            navigate("/home"); 
 
         } catch (err) {
             console.error("Erro no login:", err);

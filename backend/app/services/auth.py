@@ -4,6 +4,7 @@ from app.models.user import User
 from app.core.security import verify_password, get_password_hash
 from app.schemas.user import UserCreate
 
+
 class AuthService:
     @staticmethod
     async def authenticate_user(db: Session, email: str, password: str) -> Optional[User]:
