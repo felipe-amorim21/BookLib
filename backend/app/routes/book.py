@@ -4,6 +4,8 @@ from app.models.book import Book
 from app.schemas.book import BookCreate, BookUpdate, BookOut
 from app.database.session import get_db
 
+
+
 router = APIRouter(prefix="/books", tags=["Books"])
 
 @router.post("/", response_model=BookOut)
@@ -24,6 +26,13 @@ def get_book(book_id: int, db: Session = Depends(get_db)):
     if not book:
         raise HTTPException(status_code=404, detail="Book não encontrado")
     return book
+
+@router.get("/google/{google_id}", response_model=BookOut)
+def get_book_by_google_id(google_id: str, db: Session = Depends(get_db)):
+    book = db.query(Book).filter(Book.google_id == google_id).first()
+    if not book:
+        raise HTTPException(status_code=404, detail="Book não encontrado")
+    return BookOut.from_orm(book)
 
 @router.put("/{book_id}", response_model=BookOut)
 def update_book(book_id: int, book_update: BookUpdate, db: Session = Depends(get_db)):
