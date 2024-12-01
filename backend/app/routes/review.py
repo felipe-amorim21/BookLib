@@ -10,12 +10,10 @@ router = APIRouter(prefix="/reviews", tags=["Reviews"])
 
 @router.post("/", response_model=ReviewOut)
 def create_review(review: ReviewCreate, db: Session = Depends(get_db)):
-    # Verifica se o livro existe
     book = db.query(Book).filter(Book.id == review.book_id).first()
     if not book:
         raise HTTPException(status_code=404, detail="Book não encontrado")
-
-    # Verifica se o usuário existe
+    
     user = db.query(User).filter(User.id == review.user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User não encontado")
