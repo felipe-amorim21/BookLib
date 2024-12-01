@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
-from app.routes import auth, api
+from app.routes import auth, api, book, review
 from app.config import settings
 from dotenv import load_dotenv
 import os
@@ -54,3 +54,5 @@ async def read_root():
 
 app.include_router(auth.router, prefix=settings.API_V1_PREFIX, tags=["auth"])
 app.include_router(api.router, prefix=settings.API_V1_PREFIX)
+app.include_router(book.router, prefix=settings.API_V1_PREFIX)
+app.include_router(review.router, prefix=settings.API_V1_PREFIX)
