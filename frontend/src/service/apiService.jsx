@@ -171,9 +171,9 @@ export const getReviewsByBookId = async (bookId) => {
   }
 };
 
-export const createReview = async (bookId, reviewData) => {
+export const createReview = async (reviewData) => {
   try {
-    const response = await api.post(`/books/${bookId}/reviews`, reviewData);
+    const response = await api.post(`/reviews`, reviewData);
     return response.data;
   } catch (error) {
     console.error('Erro ao criar review:', error);

@@ -6,6 +6,7 @@ import { Home } from './components/Home';
 import { RegisterForm } from './components/RegisterForm';
 import TestAPI from './components/testBook';
 import SearchBooks from './components/searchBooks';
+import ReviewPage from './components/ReviewPage';
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/test" element={<TestAPI />} />
           <Route path="/books" element={<SearchBooks />} />
+          <Route path="/review/:bookId" element={<ReviewPage />} />
 
         </Routes>
       </Router>
