@@ -42,7 +42,7 @@ const ReviewPage = () => {
       await createReview(reviewData);
       alert('Review salva com sucesso!');
       // Redirecionar para a página do livro
-      navigate(`/book/${bookId}`);
+      navigate(`/books`);
     } catch (error) {
       console.error('Erro ao salvar a review:', error);
       alert('Ocorreu um erro ao salvar a review.');
