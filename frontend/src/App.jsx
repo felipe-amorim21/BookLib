@@ -7,6 +7,7 @@ import { RegisterForm } from './components/RegisterForm';
 import TestAPI from './components/testBook';
 import SearchBooks from './components/searchBooks';
 import ReviewPage from './components/ReviewPage';
+import BookPage from './components/BookPage';
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
           <Route path="/test" element={<TestAPI />} />
           <Route path="/books" element={<SearchBooks />} />
           <Route path="/review/:bookId" element={<ReviewPage />} />
+          <Route path="/book/:bookId" element={<BookPage />} />
 
         </Routes>
       </Router>

@@ -85,7 +85,7 @@ export const searchBooks = async (query) => {
 };
 
 
-  
+
   
 
 // Função para salvar uma review
@@ -163,7 +163,7 @@ export const deleteBook = async (id) => {
 
 export const getReviewsByBookId = async (bookId) => {
   try {
-    const response = await api.get(`/books/${bookId}/reviews`);
+    const response = await api.get(`/reviews/books/${bookId}`);
     return response.data;
   } catch (error) {
     console.error('Erro ao buscar reviews:', error);

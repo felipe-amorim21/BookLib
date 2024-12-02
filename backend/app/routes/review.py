@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.models.review import Review
 from app.models.book import Book
@@ -54,3 +54,18 @@ def delete_review(review_id: int, db: Session = Depends(get_db)):
     db.delete(review)
     db.commit()
     return {"message": "Review deletado com sucesso"}
+
+@router.get("/books/{book_id}")
+async def get_reviews_by_book_id(book_id: int , db: Session = Depends(get_db)):
+    reviews = db.query(Review).filter(Review.book_id == book_id).all()
+    if not reviews:
+        return []
+
+    return [
+        {
+            "id": review.id,
+            "review": review.review,
+            "rating": review.rating,
+        }
+        for review in reviews
+    ]
