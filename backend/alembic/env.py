@@ -7,6 +7,10 @@ from dotenv import load_dotenv
 import os
 
 
+from app.models.book import Book  # Modelo de Book
+from app.models.review import Review  # Modelo de Review
+from app.models.user import User  # Modelo de User
+
 load_dotenv()
 
 
