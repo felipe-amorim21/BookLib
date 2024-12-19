@@ -45,6 +45,8 @@ export const Home = () => {
         }
     }, [cookies.access_token]); 
 
+    console.log("Data: ", userData);
+
     return (
         <div>
             <h1>Bem-vindo à página inicial</h1>
@@ -52,8 +54,8 @@ export const Home = () => {
             {userData ? (
                 <div>
                     <h2>Informações do Usuário</h2>
-                    <p>Nome: {userData.name}</p>
-                    <p>Email: {userData.email}</p>
+                    <p>Nome: {user.username}</p>
+                    <p>Email: {user.email}</p>
                     
                     {}
                 </div>
