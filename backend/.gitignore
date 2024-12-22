@@ -39,7 +39,7 @@ ENV/
 # Database
 *.sqlite3
 *.db
-
+alembic.ini
 # Logs
 *.log
 logs/

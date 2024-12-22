@@ -8,15 +8,21 @@ const SearchBooks = () => {
   const [books, setBooks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [isSticky, setIsSticky] = useState(false); 
+  const [isSticky, setIsSticky] = useState(false);
+  const [noResultsMessage, setNoResultsMessage] = useState(''); // New state for no results message
   const booksPerPage = 8;
   const navigate = useNavigate();
 
   const handleSearch = async () => {
     if (!query.trim()) return;
     const results = await searchBooks(query);
+    if (results.length === 0) {
+      setNoResultsMessage('Nenhum livro encontrado para essa busca.');
+    } else {
+      setNoResultsMessage('');
+    }
     setBooks(results);
-    setTotalPages(Math.ceil(results.length / booksPerPage)); 
+    setTotalPages(Math.ceil(results.length / booksPerPage));
     setCurrentPage(1);
   };
 
@@ -24,13 +30,8 @@ const SearchBooks = () => {
     setCurrentPage(pageNumber);
   };
 
-  // Detectar rolagem
   const handleScroll = () => {
-    if (window.scrollY > 100) {
-      setIsSticky(true);
-    } else {
-      setIsSticky(false);
-    }
+    setIsSticky(window.scrollY > 100);
   };
 
   useEffect(() => {
@@ -40,35 +41,55 @@ const SearchBooks = () => {
     };
   }, []);
 
-  const currentBooks = books.slice((currentPage - 1) * booksPerPage, currentPage * booksPerPage);
+  const currentBooks = books.slice(
+    (currentPage - 1) * booksPerPage,
+    currentPage * booksPerPage
+  );
 
-  // Função para abrir a página de review e salvar o livro, se necessário
   const handleReviewClick = async (book) => {
     await saveBookIfNotExist(book);
-    navigate(`/review/${book.id}`); // Redireciona para a página de review
+    navigate(`/review/${book.id}`);
   };
 
   return (
     <div className="search-books-container">
-      <h1>Buscar Livros</h1>
+      <h1 className="search-title">Buscar Livros</h1>
+
       <div className={`search-input-container ${isSticky ? 'sticky' : ''}`}>
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Digite o título ou autor do livro"
+          className="search-input"
         />
-        <button onClick={handleSearch}>Buscar</button>
+        <button onClick={handleSearch} className="search-btn">
+          Buscar
+        </button>
       </div>
+
+      {noResultsMessage && <p className="no-results-message">{noResultsMessage}</p>} {/* Message when no books are found */}
 
       {books.length > 0 && (
         <div className="books-list">
           <div className="books-grid">
             {currentBooks.map((book) => (
-              <div key={book.id} className="book-item" onClick={() => handleReviewClick(book)}>
-                <h3>{book.title}</h3>
-                <p><strong>Autor:</strong> {book.author}</p>
-                {book.thumbnail && <img src={book.thumbnail} alt={book.title} />}
+              <div
+                key={book.id}
+                className="book-item"
+                onClick={() => handleReviewClick(book)}
+              >
+                <h3 className="book-title">{book.title}</h3>
+                <p className="book-author">
+                  <strong>Autor:</strong> {book.author}
+                </p>
+                {book.thumbnail && (
+                  <img
+                    src={book.thumbnail}
+                    alt={book.title}
+                    className="book-thumbnail"
+                  />
+                )}
                 <button className="review-btn">Escrever Review</button>
               </div>
             ))}
@@ -79,7 +100,7 @@ const SearchBooks = () => {
               <button
                 key={number + 1}
                 onClick={() => paginate(number + 1)}
-                className={currentPage === number + 1 ? 'active' : ''}
+                className={`pagination-btn ${currentPage === number + 1 ? 'active' : ''}`}
               >
                 {number + 1}
               </button>

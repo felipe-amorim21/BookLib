@@ -1,79 +1,167 @@
+/* General container */
 .search-books-container {
   padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.search-input-container {
+.search-title {
+  font-size: 2rem;
   margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}
+
+/* Search input and button */
+.search-input-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1; /* Ensure the search bar stays above other content */
   width: 100%;
-  max-width: 600px;
-  position: fixed; 
-  top: 0;
-  left: 0;
-  right: 0;
-  margin-left: auto; 
-  margin-right: auto; 
-  background-color: white; 
-  z-index: 10; 
-  padding: 10px; 
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
-  transition: top 0.3s; 
-  margin-top: 0;
+  padding: 20px 0; /* Give padding at top/bottom to balance */
 }
 
 .search-input-container.sticky {
-  position: sticky; 
-  top: 0; 
+  position: fixed;
+  top: 0; /* Stays at the top of the screen */
+  left: 50%; /* Centers the container */
+  transform: translateX(-50%); /* Ensures the center alignment */
+  background-color: #fff;
+  width: 100%;
+  max-width: 600px; /* Control the maximum width of the search bar */
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
 }
 
+/* Search bar styles */
+.search-input {
+  padding: 12px;
+  font-size: 1rem;
+  width: 250px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.search-btn {
+  padding: 12px 20px;
+  font-size: 1rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-btn:hover {
+  background-color: #45a049;
+}
+
+/* Books grid and items */
 .books-list {
-  width: 100%;
-  max-width: 1200px; 
-  margin-top: 120px; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 150px; /* Prevents overlap with sticky search bar */
 }
 
 .books-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr); /* 3 columns */
   gap: 20px;
-  margin-top: 20px;
+  margin-top: 30px; /* Prevents the first book from getting cut off */
+  margin-bottom: 20px;
 }
 
 .book-item {
-  border: 1px solid #ddd;
-  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 20px;
   text-align: center;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-}
-
-.book-item img {
-  max-width: 100%;
-  height: auto;
-  margin-top: 10px;
-}
-
-.pagination {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.pagination button {
-  padding: 5px 10px;
-  margin: 0 5px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
   cursor: pointer;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
+}
+
+.book-item:hover {
+  transform: translateY(-5px);
+}
+
+.book-title {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.book-author {
+  font-size: 1rem;
+  margin-bottom: 15px;
+  color: #555;
+}
+
+.book-thumbnail {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  margin-bottom: 15px;
   border-radius: 5px;
 }
 
-.pagination button.active {
-  background-color: #007bff;
+.review-btn {
+  padding: 10px 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.review-btn:hover {
+  background-color: #45a049;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.pagination-btn {
+  padding: 10px 15px;
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.pagination-btn:hover {
+  background-color: #ddd;
+  transform: translateY(-2px);
+}
+
+.pagination-btn.active {
+  background-color: #4CAF50;
   color: white;
 }
 
-.pagination button:hover {
-  background-color: #ddd;
+.pagination-btn:focus {
+  outline: none;
+}
+
+.no-results-message {
+  color: red;
+  font-size: 16px;
+  margin-top: 20px;
 }

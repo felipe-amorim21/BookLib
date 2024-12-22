@@ -2,31 +2,45 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.models.review import Review
 from app.models.book import Book
-from app.models.user import User 
+from app.models.user import User
 from app.schemas.review import ReviewCreate, ReviewUpdate, ReviewOut
 from app.database.session import get_db
 
 router = APIRouter(prefix="/reviews", tags=["Reviews"])
 
+
 @router.post("/", response_model=ReviewOut)
 def create_review(review: ReviewCreate, db: Session = Depends(get_db)):
+    # Verify the book exists
     book = db.query(Book).filter(Book.id == review.book_id).first()
     if not book:
         raise HTTPException(status_code=404, detail="Book não encontrado")
-    
+
+    # Verify the user exists
     user = db.query(User).filter(User.id == review.user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="User não encontado")
+        raise HTTPException(status_code=404, detail="User não encontrado")
 
-    new_review = Review(**review.dict())
+    # Calculate overall_rating as the average of detailed ratings
+    overall_rating = (
+        review.story_rating + review.style_rating + review.character_rating
+    ) / 3.0
+
+    # Create and save the review
+    new_review = Review(
+        **review.dict(exclude={"overall_rating"}),
+        overall_rating=overall_rating,  # Add calculated overall rating
+    )
     db.add(new_review)
     db.commit()
     db.refresh(new_review)
     return new_review
 
+
 @router.get("/", response_model=list[ReviewOut])
 def list_reviews(db: Session = Depends(get_db)):
     return db.query(Review).all()
+
 
 @router.get("/{review_id}", response_model=ReviewOut)
 def get_review(review_id: int, db: Session = Depends(get_db)):
@@ -35,16 +49,30 @@ def get_review(review_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Review não encontrado")
     return review
 
+
 @router.put("/{review_id}", response_model=ReviewOut)
 def update_review(review_id: int, review_update: ReviewUpdate, db: Session = Depends(get_db)):
     review = db.query(Review).filter(Review.id == review_id).first()
     if not review:
         raise HTTPException(status_code=404, detail="Review não encontrado")
+
+    # Update review fields
     for key, value in review_update.dict(exclude_unset=True).items():
         setattr(review, key, value)
+
+    # Recalculate overall_rating if detailed ratings are updated
+    if any(
+        key in {"story_rating", "style_rating", "character_rating"}
+        for key in review_update.dict(exclude_unset=True)
+    ):
+        review.overall_rating = (
+            review.story_rating + review.style_rating + review.character_rating
+        ) / 3.0
+
     db.commit()
     db.refresh(review)
     return review
+
 
 @router.delete("/{review_id}")
 def delete_review(review_id: int, db: Session = Depends(get_db)):
@@ -55,8 +83,9 @@ def delete_review(review_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Review deletado com sucesso"}
 
+
 @router.get("/books/{book_id}")
-async def get_reviews_by_book_id(book_id: int , db: Session = Depends(get_db)):
+async def get_reviews_by_book_id(book_id: int, db: Session = Depends(get_db)):
     reviews = db.query(Review).filter(Review.book_id == book_id).all()
     if not reviews:
         return []
@@ -64,8 +93,13 @@ async def get_reviews_by_book_id(book_id: int , db: Session = Depends(get_db)):
     return [
         {
             "id": review.id,
+            "review_title": review.review_title,
             "review": review.review,
-            "rating": review.rating,
+            "story_rating": review.story_rating,
+            "style_rating": review.style_rating,
+            "character_rating": review.character_rating,
+            "overall_rating": review.overall_rating,
+            "recommendation": review.recommendation,
         }
         for review in reviews
     ]

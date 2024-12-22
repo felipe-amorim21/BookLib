@@ -5,19 +5,24 @@ from datetime import datetime
 class ReviewCreate(BaseModel):
     book_id: int
     user_id: int
+    review_title: str
     review: str
-    rating: int = Field(..., ge=1, le=5)
+    story_rating: int
+    style_rating: int
+    character_rating: int
+    overall_rating: float
+    recommendation: bool
 
 class ReviewUpdate(BaseModel):
-    review: Optional[str]
-    rating: Optional[int] = Field(None, ge=1, le=5)
+    pass
 
 class ReviewOut(BaseModel):
     id: int
     book_id: int
     user_id: int
+    review_title: str
     review: str
-    rating: int
+    overall_rating: float
     created_at: datetime
     updated_at: Optional[datetime]
 
