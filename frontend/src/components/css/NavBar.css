@@ -1,0 +1,41 @@
+/* TopBar.css */
+.top-bar {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    position: fixed;
+    width: 98%;
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Ensure the bar stays on top of other elements */
+  }
+  
+  .top-bar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .site-title {
+    font-size: 24px;
+    margin: 0;
+  }
+  
+  .top-nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+  }
+  
+  .top-nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+  }
+  
+  .top-nav a:hover {
+    text-decoration: underline;
+  }
+  

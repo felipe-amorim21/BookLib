@@ -11,25 +11,21 @@ router = APIRouter(prefix="/reviews", tags=["Reviews"])
 
 @router.post("/", response_model=ReviewOut)
 def create_review(review: ReviewCreate, db: Session = Depends(get_db)):
-    # Verify the book exists
     book = db.query(Book).filter(Book.id == review.book_id).first()
     if not book:
         raise HTTPException(status_code=404, detail="Book não encontrado")
 
-    # Verify the user exists
     user = db.query(User).filter(User.id == review.user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User não encontrado")
 
-    # Calculate overall_rating as the average of detailed ratings
     overall_rating = (
         review.story_rating + review.style_rating + review.character_rating
     ) / 3.0
 
-    # Create and save the review
     new_review = Review(
         **review.dict(exclude={"overall_rating"}),
-        overall_rating=overall_rating,  # Add calculated overall rating
+        overall_rating=overall_rating, 
     )
     db.add(new_review)
     db.commit()
@@ -56,11 +52,9 @@ def update_review(review_id: int, review_update: ReviewUpdate, db: Session = Dep
     if not review:
         raise HTTPException(status_code=404, detail="Review não encontrado")
 
-    # Update review fields
     for key, value in review_update.dict(exclude_unset=True).items():
         setattr(review, key, value)
 
-    # Recalculate overall_rating if detailed ratings are updated
     if any(
         key in {"story_rating", "style_rating", "character_rating"}
         for key in review_update.dict(exclude_unset=True)

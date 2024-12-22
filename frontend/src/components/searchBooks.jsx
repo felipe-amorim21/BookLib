@@ -9,7 +9,7 @@ const SearchBooks = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isSticky, setIsSticky] = useState(false);
-  const [noResultsMessage, setNoResultsMessage] = useState(''); // New state for no results message
+  const [noResultsMessage, setNoResultsMessage] = useState('');
   const booksPerPage = 8;
   const navigate = useNavigate();
 
@@ -46,9 +46,15 @@ const SearchBooks = () => {
     currentPage * booksPerPage
   );
 
-  const handleReviewClick = async (book) => {
+  const handleReviewClick = async (e, book ) => {
+    e.stopPropagation();
     await saveBookIfNotExist(book);
     navigate(`/review/${book.id}`);
+  };
+
+  const handleBookClick = async (book) => {
+    await saveBookIfNotExist(book);
+    navigate(`/book/${book.id}`);
   };
 
   return (
@@ -68,7 +74,7 @@ const SearchBooks = () => {
         </button>
       </div>
 
-      {noResultsMessage && <p className="no-results-message">{noResultsMessage}</p>} {/* Message when no books are found */}
+      {noResultsMessage && <p className="no-results-message">{noResultsMessage}</p>}
 
       {books.length > 0 && (
         <div className="books-list">
@@ -77,7 +83,7 @@ const SearchBooks = () => {
               <div
                 key={book.id}
                 className="book-item"
-                onClick={() => handleReviewClick(book)}
+                onClick={() => handleBookClick(book)}
               >
                 <h3 className="book-title">{book.title}</h3>
                 <p className="book-author">
@@ -90,7 +96,7 @@ const SearchBooks = () => {
                     className="book-thumbnail"
                   />
                 )}
-                <button className="review-btn">Escrever Review</button>
+                <button className="review-btn" onClick={(e) => handleReviewClick(e, book)}>Escrever Review</button>
               </div>
             ))}
           </div>

@@ -61,106 +61,101 @@ export const RegisterForm = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">Criar uma conta</CardTitle>
-          <CardDescription className="text-center">Se registre</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
+      <div className="w-full max-w-md bg-white shadow-md rounded-lg p-8">
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "100px" }}>
+      <h1>Cadastro</h1>
+
+        {/* Error Message */}
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <div className="space-y-1">
+            <Label htmlFor="email">Email</Label>
+            <div className="relative">
+              <Input
+                id="email"
+                type="email"
+                placeholder="joao@exemplo.com"
+                value={formData.email}
+                onChange={handleChange}
+                style={{ marginBottom: "10px", padding: "8px", width: "300px" }}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="username">Usuario</Label>
+            <div className="relative">
+              <Input
+                id="username"
+                type="text"
+                placeholder="exemplo"
+                value={formData.username}
+                onChange={handleChange}
+                style={{ marginBottom: "10px", padding: "8px", width: "300px" }}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="password">Senha</Label>
+            <div className="relative">
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={handleChange}
+                style={{ marginBottom: "10px", padding: "8px", width: "300px" }}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="confirmPassword">Confirmar senha</Label>
+            <div className="relative">
+              <Input
+                id="confirmPassword"
+                type="password"
+                placeholder="••••••••"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                style={{ marginBottom: "10px", padding: "8px", width: "300px" }}
+                required
+              />
+            </div>
+          </div>
+
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              'Cadastrar'
             )}
-
-            <div className="space-y-1">
-              <Label htmlFor="email">Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="joao@exemplo.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="pl-10"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <Label htmlFor="username">Usuario</Label>
-              <div className="relative">
-                <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="username"
-                  type="text"
-                  placeholder="exemplo"
-                  value={formData.username}
-                  onChange={handleChange}
-                  className="pl-10"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <Label htmlFor="password">Senha</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="pl-10"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <Label htmlFor="confirmPassword">Confirmar senha</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  placeholder="••••••••"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="pl-10"
-                  required
-                />
-              </div>
-            </div>
-
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                'Cadastrar'
-              )}
-            </Button>
-          </form>
-        </CardContent>
-        <CardFooter className="flex justify-center">
+          </Button>
+        </form>
+        <hr style={{ width: "100%", margin: "20px 0" }} />
+        <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             Já tem uma conta?{' '}
-            <Button
-              variant="link"
-              className="p-0 text-blue-600 hover:text-blue-800"
+            <button
+              className="text-blue-600 hover:text-blue-800 cursor-pointer"
               onClick={() => navigate('/login')}
             >
               Fazer Login
-            </Button>
+            </button>
           </p>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
+    </div>
     </div>
   );
 };

@@ -14,8 +14,8 @@ export const searchBooks = async (query) => {
     try {
       const response = await axios.get('https://www.googleapis.com/books/v1/volumes', {
         params: {
-          q: query, // Termo de pesquisa
-          maxResults: 10, // Limite de resultados
+          q: query, 
+          maxResults: 10, 
         },
       });
       return response.data.items.map((item) => ({
@@ -23,10 +23,10 @@ export const searchBooks = async (query) => {
         title: item.volumeInfo.title || 'Título Desconhecido',
         author: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Autor Desconhecido',
         description: item.volumeInfo.description || 'Sem descrição.',
-        thumbnail: item.volumeInfo.imageLinks?.thumbnail || '', // Miniatura da capa
-        // Ajustando para enviar valores válidos
-        published_year: item.volumeInfo.publishedDate ? parseInt(item.volumeInfo.publishedDate.split('-')[0]) : null, // Garantir que seja número
-        genre: item.volumeInfo.categories ? item.volumeInfo.categories[0] : '', // Primeira categoria disponível ou string vazia
+        thumbnail: item.volumeInfo.imageLinks?.thumbnail || '', 
+
+        published_year: item.volumeInfo.publishedDate ? parseInt(item.volumeInfo.publishedDate.split('-')[0]) : null,
+        genre: item.volumeInfo.categories ? item.volumeInfo.categories[0] : '',
       }));
     } catch (error) {
       console.error('Erro ao buscar livros:', error);
@@ -37,21 +37,18 @@ export const searchBooks = async (query) => {
   export const saveBookIfNotExist = async (book) => {
     console.log("livro: ", book);
     try {
-      // Verificar se o livro já existe no backend
       console.log("Verificando se o livro já existe...");
       const response = await api.get(`/books/google/${book.id}`);
       console.log("Resposta da verificação:", response.data);
 
       if (!response.data) {
-        // Se o livro não existir, salvar no backend
         
-        // Garantir que o livro seja enviado no formato correto
         const bookData = {
           title: book.title,
           author: book.author,
           description: book.description,
-          genre: book.genre || '', // Garantir que seja uma string, mesmo que vazia
-          published_year: book.published_year || null, // Garantir que seja um número ou null
+          genre: book.genre || '', 
+          published_year: book.published_year || null, 
         };
 
         console.log("Chegou na criação do livro");
@@ -62,7 +59,6 @@ export const searchBooks = async (query) => {
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        // Tratar o erro 404 (livro não encontrado) de forma específica
         console.log("Livro não encontrado. Criando novo livro...");
         
         const bookData = {
@@ -70,15 +66,14 @@ export const searchBooks = async (query) => {
           author: book.author,
           google_id: book.id,
           description: book.description,
-          genre: book.genre || '', // Garantir que seja uma string, mesmo que vazia
-          published_year: book.published_year || null, // Garantir que seja um número ou null
+          genre: book.genre || '', 
+          published_year: book.published_year || null, 
         };
 
         console.log("Criando o livro...");
         console.log(bookData)
         await createBook(bookData);
       } else {
-        // Outros erros são tratados aqui
         console.error('Erro ao salvar o livro:', error);
       }
     }

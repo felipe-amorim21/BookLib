@@ -34,7 +34,6 @@ export const LoginForm = () => {
         setError("");
 
         try {
-        
             const response = await fetch("http://localhost:8000/api/v1/login", {
                 method: "POST",
                 headers: { 
@@ -53,7 +52,7 @@ export const LoginForm = () => {
             const data = await response.json();
             setCookie("access_token", data.access_token, { path: "/", secure: true, sameSite: "Strict" });
             alert("Login realizado com sucesso!");
-            navigate("/home"); 
+            navigate("/home");
 
         } catch (err) {
             console.error("Erro no login:", err);
@@ -61,12 +60,15 @@ export const LoginForm = () => {
         }
     };
 
+    const handleRegisterRedirect = () => {
+        navigate("/register");
+    };
+
     return (
         <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "100px" }}>
                 <h1>Login</h1>
 
-                {/* Login com email e senha */}
                 <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                     <input
                         type="email"
@@ -92,8 +94,12 @@ export const LoginForm = () => {
 
                 <hr style={{ width: "100%", margin: "20px 0" }} />
 
-                {/* Login com Google */}
                 <GoogleLogin onSuccess={handleSuccess} onError={handleFailure} />
+
+            
+                <div style={{ marginTop: "20px", textAlign: "center" }}>
+                    <p>Não tem uma conta? <button className="text-blue-600 hover:text-blue-800 cursor-pointer" onClick={handleRegisterRedirect} >Cadastre-se</button></p>
+                </div>
             </div>
         </GoogleOAuthProvider>
     );
