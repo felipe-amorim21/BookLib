@@ -40,6 +40,7 @@ class ReviewOut(BaseModel):
     review_title: str = Field(..., description="Title of the review")
     review: str = Field(..., description="Content of the review")
     overall_rating: float = Field(..., ge=1, le=5, description="Overall rating (1.0 to 5.0)")
+    recommendation: bool = Field(..., description="Whether the reviewer recommends the book or not")
     created_at: datetime = Field(..., description="Timestamp when the review was created")
     updated_at: Optional[datetime] = Field(None, description="Timestamp when the review was last updated")
 
