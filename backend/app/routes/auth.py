@@ -32,14 +32,20 @@ oauth.register(
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def register(user_data: UserCreate, db: Session = Depends(get_db)) -> UserResponse:
+    """
+    Register a new user.
+    Checks if the user already exists using the email or username.
+    If a user already exists, raises a 400 error.
+    """
     existing_user = db.query(User).filter(
         (User.email == user_data.email) | (User.username == user_data.username)
     ).first()
     if existing_user:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Email ou usuário já registrado"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Email or username already registered"
         )
     user = await AuthService.create_user(db, user_data)
+    logger.info(f"User {user_data.username} registered successfully.")
     return user
 
 
@@ -49,20 +55,24 @@ async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ) -> Token:
+    """
+    Login with username and password.
+    Authenticates the user and returns a token. If credentials are incorrect, raises a 401 error.
+    """
     user = await AuthService.authenticate_user(
         db, form_data.username, form_data.password
     )
 
     if not user:
-        logger.warning(f"Falha de login para o usuário {form_data.username}")
+        logger.warning(f"Failed login attempt for user {form_data.username}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Email ou senha incorretos",
+            detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = create_access_token(user.id)
 
-    logger.info(f"Usuário {form_data.username} autenticado com sucesso.")
+    logger.info(f"User {form_data.username} authenticated successfully.")
     response.set_cookie(
         key="access_token",
         value=access_token,
@@ -77,6 +87,10 @@ async def login(
 
 @router.get("/auth/google/login")
 async def google_login(request: Request):
+    """
+    Redirects to the Google OAuth login page.
+    Initializes the OAuth flow and sets a nonce for CSRF protection.
+    """
     try:
         nonce = os.urandom(16).hex()
         request.session['oauth_nonce'] = nonce
@@ -85,13 +99,16 @@ async def google_login(request: Request):
 
         return await oauth.google.authorize_redirect(request, redirect_uri, access_type="offline", state=nonce)
     except Exception as e:
-        logging.error(f"Erro no login com Google: {str(e)}")
-        raise HTTPException(status_code=500, detail="Erro no login com Google")
+        logging.error(f"Error during Google login: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error during Google login")
 
 
 @router.get('/auth/google/callback')
 async def google_callback(request: Request, db: Session = Depends(get_db)):
-    """Handle the OAuth callback"""
+    """
+    Handle the callback after Google OAuth authentication.
+    Verifies the nonce to prevent CSRF attacks, retrieves user data, and creates or logs in the user.
+    """
     try:
         stored_nonce = request.session.get('oauth_nonce')
         received_nonce = request.query_params.get('state')
@@ -128,28 +145,34 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
             key="session",
             value=access_token,
             httponly=True,
-            secure=False, 
-            samesite="lax",
+            secure=True,  # Set to True in production for added security
+            samesite="Lax",
             max_age=3600
         )
 
+        logger.info(f"User {existing_user.username} logged in via Google OAuth.")
         return response
 
     except Exception as e:
-        logging.error(f"Erro ao processar o callback do Google: {str(e)}")
+        logging.error(f"Error during Google callback: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @router.get("/user/me")
 def get_user_data(authorization: str = Depends(oauth2_scheme)):
+    """
+    Retrieve the currently authenticated user's data using either a Google or regular access token.
+    If token is invalid or expired, raises a 401 error.
+    """
     try:
         user = verify_google_token(authorization)
         if user:
             return user
     except Exception as e:
-        print(e)
+        logger.error(f"Google token verification failed: {e}")
         pass 
 
     try:
@@ -157,7 +180,7 @@ def get_user_data(authorization: str = Depends(oauth2_scheme)):
         if user:
             return user
     except Exception as e:
-        print(e)
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido ou expirado.")
+        logger.error(f"Access token verification failed: {e}")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token.")
 
-    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido ou expirado.")
+    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token.")
