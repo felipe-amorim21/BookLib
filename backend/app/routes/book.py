@@ -4,6 +4,7 @@ from app.models.book import Book
 from app.schemas.book import BookCreate, BookUpdate, BookOut
 from app.database.session import get_db
 from app.factory.factories import BookFactory
+from app.decorators.book import cache_response
 
 router = APIRouter(prefix="/books", tags=["Books"])
 
@@ -13,9 +14,11 @@ def create_book(book: BookCreate, db: Session = Depends(get_db)):
     Create a new book.
     This endpoint creates a new book in the database.
     """
-    return BookFactory.create_book(db, book)
+    new_book = BookFactory.create_book(db, book)
+    return new_book
 
 @router.get("/", response_model=list[BookOut])
+@cache_response(timeout=120) #cache de 2 minutos
 def list_books(db: Session = Depends(get_db)):
     """
     List all books.

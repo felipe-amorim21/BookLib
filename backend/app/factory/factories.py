@@ -5,6 +5,7 @@ from app.models.user import User
 from app.schemas.book import BookCreate
 from app.schemas.review import ReviewCreate
 from fastapi import HTTPException
+from app.decorators.review import moderate_review
 
 class BookFactory:
     @staticmethod
@@ -18,11 +19,13 @@ class BookFactory:
 
 class ReviewFactory:
     @staticmethod
+    
     def calculate_overall_rating(story_rating: int, style_rating: int, character_rating: int) -> float:
         """Calcula a média das avaliações."""
         return (story_rating + style_rating + character_rating) / 3.0
 
     @staticmethod
+    @moderate_review
     def create_review(db: Session, review_data: ReviewCreate) -> Review:
         """Cria um novo review, verificando se o livro e o usuário existem."""
         book = db.query(Book).filter(Book.id == review_data.book_id).first()

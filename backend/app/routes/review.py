@@ -6,6 +6,8 @@ from app.models.user import User
 from app.schemas.review import ReviewCreate, ReviewUpdate, ReviewOut
 from app.database.session import get_db
 from app.factory.factories import ReviewFactory
+from app.decorators.review import check_review_owner
+from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="/reviews", tags=["Reviews"])
 
@@ -21,7 +23,8 @@ def create_review(review: ReviewCreate, db: Session = Depends(get_db)):
     Create a new review for a book. This route checks if the book and user exist,
     calculates the overall rating, and saves the new review to the database.
     """
-    return ReviewFactory.create_review(db, review)
+    new_review = ReviewFactory.create_review(db, review)
+    return new_review
 
 @router.get("/", response_model=list[ReviewOut])
 def list_reviews(db: Session = Depends(get_db)):
@@ -64,7 +67,8 @@ def update_review(review_id: int, review_update: ReviewUpdate, db: Session = Dep
     db.refresh(review)
     return review
 
-@router.delete("/{review_id}")
+@router.delete("/{review_id}", response_model=None)
+@check_review_owner
 def delete_review(review_id: int, db: Session = Depends(get_db)):
     """
     Delete a review by its ID.
@@ -74,7 +78,7 @@ def delete_review(review_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Review not found")
     db.delete(review)
     db.commit()
-    return {"message": "Review deleted successfully"}
+    return JSONResponse(status_code=204, content={"message": "Review deleted successfully"})
 
 @router.get("/books/{book_id}", response_model=list[ReviewOut])
 async def get_reviews_by_book_id(book_id: int, db: Session = Depends(get_db)):
