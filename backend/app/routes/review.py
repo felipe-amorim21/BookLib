@@ -5,6 +5,7 @@ from app.models.book import Book
 from app.models.user import User
 from app.schemas.review import ReviewCreate, ReviewUpdate, ReviewOut
 from app.database.session import get_db
+from app.factory.factories import ReviewFactory
 
 router = APIRouter(prefix="/reviews", tags=["Reviews"])
 
@@ -20,24 +21,7 @@ def create_review(review: ReviewCreate, db: Session = Depends(get_db)):
     Create a new review for a book. This route checks if the book and user exist,
     calculates the overall rating, and saves the new review to the database.
     """
-    book = db.query(Book).filter(Book.id == review.book_id).first()
-    if not book:
-        raise HTTPException(status_code=404, detail="Book not found")
-
-    user = db.query(User).filter(User.id == review.user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    overall_rating = calculate_overall_rating(review.story_rating, review.style_rating, review.character_rating)
-
-    new_review = Review(
-        **review.dict(exclude={"overall_rating"}),
-        overall_rating=overall_rating,
-    )
-    db.add(new_review)
-    db.commit()
-    db.refresh(new_review)
-    return new_review
+    return ReviewFactory.create_review(db, review)
 
 @router.get("/", response_model=list[ReviewOut])
 def list_reviews(db: Session = Depends(get_db)):

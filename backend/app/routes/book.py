@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.models.book import Book
 from app.schemas.book import BookCreate, BookUpdate, BookOut
 from app.database.session import get_db
+from app.factory.factories import BookFactory
 
 router = APIRouter(prefix="/books", tags=["Books"])
 
@@ -12,11 +13,7 @@ def create_book(book: BookCreate, db: Session = Depends(get_db)):
     Create a new book.
     This endpoint creates a new book in the database.
     """
-    new_book = Book(**book.dict())
-    db.add(new_book)
-    db.commit()
-    db.refresh(new_book)
-    return new_book
+    return BookFactory.create_book(db, book)
 
 @router.get("/", response_model=list[BookOut])
 def list_books(db: Session = Depends(get_db)):
