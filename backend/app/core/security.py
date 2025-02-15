@@ -11,7 +11,7 @@ import logging
 
 # Configuração do contexto de criptografia e esquema OAuth2
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")  
 
 # Configuração de log para monitoramento de erros
 logger = logging.getLogger(__name__)

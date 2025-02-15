@@ -15,6 +15,7 @@ class BookCreate(BaseModel):
                                            ge=0, 
                                            le=datetime.now().year, 
                                            description="Ano de publicação do livro (não pode ser negativo ou maior que o ano atual).")
+    thumbnail: Optional[str] = Field(None, description="URL da imagem da capa do livro.")                                       
 
 class BookUpdate(BaseModel):
     """
@@ -29,6 +30,7 @@ class BookUpdate(BaseModel):
                                            ge=0, 
                                            le=datetime.now().year, 
                                            description="Ano de publicação do livro (não pode ser negativo ou maior que o ano atual).")
+    thumbnail: Optional[str] = Field(None, description="URL da imagem da capa do livro.")
 
 class BookOut(BaseModel):
     """
@@ -46,6 +48,7 @@ class BookOut(BaseModel):
                                            description="Ano de publicação do livro (não pode ser negativo ou maior que o ano atual).")
     created_at: datetime = Field(..., description="Data de criação do registro.")
     updated_at: Optional[datetime] = Field(None, description="Data de última atualização do registro.")
+    thumbnail: Optional[str] = Field(None, description="URL da imagem da capa do livro.")
 
     class Config:
         orm_mode = True

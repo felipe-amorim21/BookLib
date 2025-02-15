@@ -24,7 +24,7 @@ export const searchBooks = async (query) => {
         author: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Autor Desconhecido',
         description: item.volumeInfo.description || 'Sem descrição.',
         thumbnail: item.volumeInfo.imageLinks?.thumbnail || '', 
-
+        
         published_year: item.volumeInfo.publishedDate ? parseInt(item.volumeInfo.publishedDate.split('-')[0]) : null,
         genre: item.volumeInfo.categories ? item.volumeInfo.categories[0] : '',
       }));
@@ -47,7 +47,8 @@ export const searchBooks = async (query) => {
           title: book.title,
           author: book.author,
           description: book.description,
-          genre: book.genre || '', 
+          genre: book.genre || '',
+          thumbnail: book.thumbnail,
           published_year: book.published_year || null, 
         };
 
@@ -66,7 +67,8 @@ export const searchBooks = async (query) => {
           author: book.author,
           google_id: book.id,
           description: book.description,
-          genre: book.genre || '', 
+          genre: book.genre || '',
+          thumbnail: book.thumbnail,
           published_year: book.published_year || null, 
         };
 
@@ -113,6 +115,7 @@ export const getBookById = async (id) => {
     return null;
   }
 };
+
 
 export const getBookByGoogleId = async (id) => {
     try {
@@ -165,6 +168,12 @@ export const getReviewsByBookId = async (bookId) => {
     return [];
   }
 };
+
+export const getAiReviewByBookId = async (bookId) => {
+  const response = await api.get(`/books/${bookId}/ai-summary`);
+  return response.data;
+};
+
 
 export const createReview = async (reviewData) => {
   try {

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
-from app.routes import auth, api, book, review
+from app.routes import auth, api, book, review, ia
 from app.config import settings
 from dotenv import load_dotenv
 import os
@@ -27,12 +27,12 @@ validate_environment_variables(["DATABASE_URL", "SECRET_KEY"])
 DATABASE_URL = os.getenv("DATABASE_URL")
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-# Configurações globais
+
 ALLOWED_ORIGINS = ["http://localhost:5173"]
 SESSION_COOKIE_NAME = "session"
 SESSION_MAX_AGE = 60 * 60 * 24
 
-# Criar a aplicação FastAPI
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
@@ -75,14 +75,15 @@ async def add_cors_headers(request: Request, call_next):
     })
     return response
 
-# Rota raiz
+
 @app.get("/")
 async def read_root():
     """Endpoint raiz da aplicação."""
     return {"message": "Welcome to the BookReview API"}
 
-# Incluir os roteadores
+
 app.include_router(auth.router, prefix=settings.API_V1_PREFIX, tags=["auth"])
 app.include_router(api.router, prefix=settings.API_V1_PREFIX)
 app.include_router(book.router, prefix=settings.API_V1_PREFIX)
 app.include_router(review.router, prefix=settings.API_V1_PREFIX)
+app.include_router(ia.router, prefix=settings.API_V1_PREFIX)
