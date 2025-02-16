@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import { useAuth } from '../context/AuthContext';
+import './css/Home.css'; // Importando o arquivo de CSS
 
 export const Home = () => {
     const [cookies] = useCookies(["acess_token"]);
@@ -11,27 +12,23 @@ export const Home = () => {
     const { user } = useAuth();
 
     useEffect(() => {
-        console.log("cookies: ", cookies.access_token)
-        console.log("user: ", user)
         const fetchUserData = async () => {
             try {
                 let token = cookies.access_token;
-                console.log("token: ", token)
                 if (!token) {
                     setError("Token não encontrado.");
                     return;
                 }
 
-                
                 const authHeader = `Bearer ${token}`;
                 const response = await axios.get("http://localhost:8000/api/v1/user/me", {
                     headers: {
-                        Authorization: authHeader, 
+                        Authorization: authHeader,
                     },
                     withCredentials: true,
                 });
 
-                setUserData(response.data); 
+                setUserData(response.data);
             } catch (error) {
                 console.error("Erro ao obter dados do usuário:", error);
                 setError("Falha ao carregar dados do usuário.");
@@ -39,29 +36,44 @@ export const Home = () => {
         };
 
         if (cookies.access_token) {
-            fetchUserData(); 
+            fetchUserData();
         } else {
-            setError("Usuário não autenticado.");
+            
         }
-    }, [cookies.access_token]); 
-
-    console.log("Data: ", userData);
+    }, [cookies.access_token]);
 
     return (
-        <div>
-            <h1>Bem-vindo à página inicial</h1>
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            {userData ? (
-                <div>
-                    <h2>Informações do Usuário</h2>
-                    <p>Nome: {user.username}</p>
-                    <p>Email: {user.email}</p>
+        <div className="home-container">
+            <header className="header">
+                <h1 className="app-name">BookLib</h1>
+                {user && <p className="welcome-message">Bem-vindo, {user.username}!</p>}
+            </header>
+
+            <section className="intro-section">
+                <p className="intro-text">
+                    O <strong>BookLib</strong> é o sistema ideal para amantes de livros que querem compartilhar suas
+                    experiências e opiniões. Faça login para adicionar reviews sobre seus livros favoritos, além de 
+                    poder salvar os livros que mais gosta em sua lista de favoritos. 
+                    <br />
                     
-                    {}
-                </div>
-            ) : (
-                <p>Carregando dados do usuário...</p>
-            )}
+                </p>
+            </section>
+
+            <section className="user-section">
+                {error && <p className="error-message">{error}</p>}
+
+                {!user && !error ? (
+                    <p className="login-prompt">Você não está autenticado. Faça login para acessar suas informações.</p>
+                ) : (
+                    userData ? (
+                        <div className="user-info">
+                            <h2>Bem-vindo, {user.username}</h2>
+                        </div>
+                    ) : (
+                        <p>Faça login para começar a fazer reviews</p>
+                    )
+                )}
+            </section>
         </div>
     );
 };

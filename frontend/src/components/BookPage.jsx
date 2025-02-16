@@ -11,6 +11,8 @@ import {
 import { useAuth } from '../context/AuthContext'; 
 import "./css/BookPage.css";
 import { useUser } from '../context/userContext';
+import { useNavigate } from 'react-router-dom';
+import { FaRegHeart, FaHeart } from 'react-icons/fa';
 
 
 const BookDetails = ({ book, isFavorited, handleFavoriteToggle }) => (
@@ -32,8 +34,22 @@ const BookDetails = ({ book, isFavorited, handleFavoriteToggle }) => (
     </p>
 
     {/* Botão de Favoritar/Desfavoritar */}
-    <button className="favorite-button" onClick={handleFavoriteToggle}>
-      {isFavorited ? "Desfavoritar" : "Favoritar"}
+    <button 
+      className={`favorite-button ${isFavorited ? 'favorited' : ''}`} 
+      onClick={handleFavoriteToggle}
+    >
+      {/* Exibindo o ícone do coração e texto dinâmico */}
+      {isFavorited ? (
+        <>
+          <FaHeart color="red" /> 
+          <span>Desfavoritar</span>
+        </>
+      ) : (
+        <>
+          <FaRegHeart color="gray" />
+          <span>Favoritar</span>
+        </>
+      )}
     </button>
   </div>
 );
@@ -86,6 +102,7 @@ const BookPage = () => {
   const [isFavorited, setIsFavorited] = useState(false);
   const [loading, setLoading] = useState(true);
   const { userData, error } = useUser();
+  const navigate = useNavigate();
   console.log("userauth: ", userData);
 
   useEffect(() => {
@@ -132,6 +149,11 @@ const BookPage = () => {
     return <p>Carregando...</p>;
   }
 
+  const handleReviewClick = async (e, book ) => {
+      e.stopPropagation();
+      navigate(`/review/${book.google_id}`);
+    };
+
   return (
     <div className="book-page">
       {book ? (
@@ -141,6 +163,12 @@ const BookPage = () => {
             isFavorited={isFavorited}
             handleFavoriteToggle={handleFavoriteToggle}
           />
+          <button
+                                    className="review-btn"
+                                    onClick={(e) => handleReviewClick(e, book)}
+                                >
+                                    Escrever Review
+                                </button>
 
           {/* Exibe o resumo da IA se existir */}
           {aiReview && <AiReviewCard aiReview={aiReview} />}

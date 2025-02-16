@@ -1,5 +1,5 @@
 import { useFavorites } from "../hooks/useFavorites";
-import { Heart, HeartFill } from "lucide-react"; // Instale a biblioteca se necessário
+import { Heart, HeartFill } from "lucide-react";
 
 const FavoriteButton = ({ bookId }) => {
   const { favorites, toggleFavorite } = useFavorites();
