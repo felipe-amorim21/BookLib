@@ -184,6 +184,16 @@ export const favoriteBook = async (bookId, userId) => {
   }
 };
 
+export const favoritesUser = async (userId) => {
+  try {
+    const response = await api.get(`/favoritos?user_id=${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao listar livros favoritos do usuário:", error);
+    return null;
+  }
+};
+
 export const unfavoriteBook = async (bookId, userId) => {
   try {
     const response = await api.delete(`/desfavoritar/${bookId}?user_id=${userId}`);

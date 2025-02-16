@@ -11,6 +11,7 @@ import SearchBooks from './components/searchBooks';
 import ReviewPage from './components/ReviewPage';
 import BookPage from './components/BookPage';
 import { UserProvider } from './context/userContext';
+import FavoritosPage from './components/FavoritosPage';
 
 const App = () => { 
   return (
@@ -26,6 +27,7 @@ const App = () => {
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/test" element={<TestAPI />} />
           <Route path="/books" element={<SearchBooks />} />
+          <Route path="/favoritos" element={<FavoritosPage />} />
           <Route path="/review/:bookId" element={<ReviewPage />} />
           <Route path="/book/:bookId" element={<BookPage />} />
 
