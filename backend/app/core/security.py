@@ -74,6 +74,7 @@ def decode_token_and_get_user_id(token: str) -> int:
         HTTPException: Se o token for inválido ou o ID do usuário não puder ser encontrado.
     """
     try:
+        print(f"Token recebido: {token}")  # 🔍 Verifique o que está chegando
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         user_id: int = payload.get("sub")
         if user_id is None:
@@ -99,13 +100,16 @@ def verify_access_token(token: str):
         HTTPException: Se o token for inválido.
     """
     try:
+        print(f"Token recebido: {token}")  # 🔍 Verifica o que está chegando
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        
         if payload.get("sub") is None:
             logger.error("Token inválido: campo 'sub' ausente.")
             raise HTTPException(status_code=401, detail="Invalid token payload")
-        return payload
-    except JWTError:
-        logger.error("Erro ao verificar o token JWT.")
+
+        return payload.get("sub")
+    except JWTError as e:
+        logger.error(f"Erro ao verificar o token JWT: {e}")
         raise HTTPException(status_code=401, detail="Invalid token")
 
 

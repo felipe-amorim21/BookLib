@@ -93,32 +93,55 @@ async def get_user_from_token(token: str, db: Session):
     return user
 
 
+async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+    try:
+        # Verifica o token e extrai o id do usuário
+        user_id = verify_access_token(token)
+        user = db.query(User).filter(User.id == user_id).first()
+
+        if user is None:
+            raise HTTPException(status_code=404, detail="Usuário não encontrado")
+        return user
+
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Token inválido ou expirado")
+
+
 # Rota para obter informações do usuário autenticado
-@router.get("/user/me")
-async def get_user_info(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+@router.get("/user/actual")
+async def get_user_info(token: str, db: Session = Depends(get_db)):
     """
     Retrieve information about the currently authenticated user.
     
     - token: The JWT token used to authenticate the user.
     """
     try:
-        user_id = verify_access_token(token)
+        logger.debug(f"Received token: {token[:10]}...")  # Mostra os primeiros 10 caracteres para debug (não exponha o token completo)
+        
+        # Verifica o token e extrai o id do usuário
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        
+        if payload.get("sub") is None:
+            logger.error("Token inválido: campo 'sub' ausente.")
+            raise HTTPException(status_code=401, detail="Invalid token payload")
+        
+        user_id = payload.get("sub")
         user = db.query(User).filter(User.id == user_id).first()
 
-        if not user:
-            logger.error("Authenticated user not found.")
+        if user is None:
+            logger.error(f"Usuário com ID {user_id} não encontrado.")
             raise HTTPException(status_code=404, detail="Usuário não encontrado")
+        
+        return user
 
-        logger.info(f"Authenticated user info retrieved: {user.email}.")
-        return {
-            "username": user.username,
-            "email": user.email,
-            # Adicione outras informações que você queira retornar
-        }
+    except JWTError as e:
+        logger.error(f"JWT Error: {str(e)}")
+        raise HTTPException(status_code=401, detail="Token inválido ou expirado")
 
     except Exception as e:
-        logger.error(f"Error retrieving user info: {str(e)}")
-        raise HTTPException(status_code=401, detail="Token inválido ou expirado")
+        logger.error(f"Erro ao recuperar informações do usuário: {str(e)}")
+        raise HTTPException(status_code=422, detail=f"Erro ao processar a requisição: {str(e)}")
+
 
 
 @router.post("/google-auth")

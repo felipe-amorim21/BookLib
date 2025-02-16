@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
-from app.routes import auth, api, book, review, ia
+from app.routes import auth, api, book, review, ia, favorites
 from app.config import settings
 from dotenv import load_dotenv
 import os
@@ -87,3 +87,4 @@ app.include_router(api.router, prefix=settings.API_V1_PREFIX)
 app.include_router(book.router, prefix=settings.API_V1_PREFIX)
 app.include_router(review.router, prefix=settings.API_V1_PREFIX)
 app.include_router(ia.router, prefix=settings.API_V1_PREFIX)
+app.include_router(favorites.router, prefix=settings.API_V1_PREFIX)

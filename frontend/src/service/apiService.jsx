@@ -4,8 +4,10 @@ const API_BASE_URL = 'http://localhost:8000/api/v1';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
+  
   },
 });
 
@@ -153,6 +155,41 @@ export const deleteBook = async (id) => {
     return response.data;
   } catch (error) {
     console.error('Erro ao deletar livro:', error);
+    return null;
+  }
+};
+
+// Função para favoritar um livro
+export const checkIfBookIsFavorited = async (bookId, userId) => {
+  try {
+    console.log("🔍 Verificando favorito para o livro ID:", bookId);
+
+    const response = await api.get(`/favoritos/${bookId}?user_id=${userId}`);
+    
+    console.log("✅ Resposta da API:", response);
+    return response.data;
+  } catch (error) {
+    console.error("❌ Erro na verificação de favorito:", error.response ? error.response.data : error.message);
+    return { isFavorito: false };
+  }
+};
+
+export const favoriteBook = async (bookId, userId) => {
+  try {
+    const response = await api.post(`/favoritar/${bookId}?user_id=${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao favoritar o livro:", error);
+    return null;
+  }
+};
+
+export const unfavoriteBook = async (bookId, userId) => {
+  try {
+    const response = await api.delete(`/desfavoritar/${bookId}?user_id=${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao desfavoritar o livro:", error);
     return null;
   }
 };

@@ -10,10 +10,12 @@ import TestAPI from './components/testBook';
 import SearchBooks from './components/searchBooks';
 import ReviewPage from './components/ReviewPage';
 import BookPage from './components/BookPage';
+import { UserProvider } from './context/userContext';
 
-const App = () => {
+const App = () => { 
   return (
-    <AuthProvider>
+    <UserProvider>
+      <AuthProvider>
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -30,6 +32,9 @@ const App = () => {
         </Routes>
       </Router>
     </AuthProvider>
+
+    </UserProvider>
+    
   );
 };
 

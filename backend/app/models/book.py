@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.sql import func
 from app.database.session import Base
+from sqlalchemy.orm import relationship
 
 class Book(Base):
     __tablename__ = "books"
@@ -15,3 +16,4 @@ class Book(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     thumbnail = Column(String, nullable=True)
+    favorites = relationship("Favorito", back_populates="livro")

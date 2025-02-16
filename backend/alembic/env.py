@@ -10,6 +10,7 @@ import os
 from app.models.book import Book  # Modelo de Book
 from app.models.review import Review  # Modelo de Review
 from app.models.user import User  # Modelo de User
+from app.models.favorite import Favorito
 
 load_dotenv()
 

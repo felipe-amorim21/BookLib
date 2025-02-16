@@ -44,6 +44,7 @@ export const AuthProvider = ({ children }) => {
 
       const userData = await response.json();
       console.log("userData: ", userData);
+      localStorage.setItem("token", token);
       setUser(userData);
       setLoading(false);
     } catch (error) {
