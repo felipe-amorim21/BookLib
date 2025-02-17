@@ -45,7 +45,7 @@ export const UserProvider = ({ children }) => {
     }, [cookies.access_token]);
 
     return (
-        <UserContext.Provider value={{ userData, error }}>
+        <UserContext.Provider value={{ userData, error, setUserData }}>
             {children}
         </UserContext.Provider>
     );

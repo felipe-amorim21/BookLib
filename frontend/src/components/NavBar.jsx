@@ -1,8 +1,22 @@
 import React from 'react';
 import './css/NavBar.css';
 import { useUser } from '../context/userContext';
+
 const NavBar = () => {
-const { userData, error } = useUser();
+const { userData, setUserData } = useUser();
+
+
+const clearCookies = () => {
+  document.cookie = 'access_token=; Max-Age=0';
+};
+
+const handleLogout = (e) => {
+  e.preventDefault();
+  clearCookies();
+  localStorage.removeItem('token');
+  setUserData(null);
+  window.location.href = '/login'; // Redireciona para a página de login após o logout
+};
 
 
   return (
@@ -15,6 +29,7 @@ const { userData, error } = useUser();
             {userData ? <li><a href="/favoritos">Favoritos</a></li> : <li><a href="/login">Login</a></li>}
             <li><a href="/about">Sobre</a></li>
             <li><a href="/contact">Contato</a></li>
+            {userData && <li><button onClick={handleLogout}>Logout</button></li>}
             
           </ul>
         </nav>

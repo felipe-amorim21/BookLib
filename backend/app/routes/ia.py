@@ -19,6 +19,6 @@ async def generate_local_summary(book_id: int, db: Session = Depends(get_db)):
 
     parser = PlaintextParser.from_string(reviews_text, Tokenizer("portuguese"))
     summarizer = LsaSummarizer()
-    summary = summarizer(parser.document, 3)
+    summary = summarizer(parser.document, 4)
 
     return {"ai_review": " ".join(str(sentence) for sentence in summary)}

@@ -13,12 +13,14 @@ import BookPage from './components/BookPage';
 import { UserProvider } from './context/userContext';
 import FavoritosPage from './components/FavoritosPage';
 
+
 const App = () => { 
   return (
     <UserProvider>
       <AuthProvider>
       <Router>
         <Routes>
+          
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home/>} />
           <Route path="/login" element={<LoginForm />} />

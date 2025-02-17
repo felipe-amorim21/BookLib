@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import { useAuth } from '../context/AuthContext';
-import './css/Home.css'; // Importando o arquivo de CSS
+import './css/Home.css';
 
 export const Home = () => {
     const [cookies] = useCookies(["acess_token"]);
@@ -59,21 +59,7 @@ export const Home = () => {
                 </p>
             </section>
 
-            <section className="user-section">
-                {error && <p className="error-message">{error}</p>}
-
-                {!user && !error ? (
-                    <p className="login-prompt">Você não está autenticado. Faça login para acessar suas informações.</p>
-                ) : (
-                    userData ? (
-                        <div className="user-info">
-                            <h2>Bem-vindo, {user.username}</h2>
-                        </div>
-                    ) : (
-                        <p>Faça login para começar a fazer reviews</p>
-                    )
-                )}
-            </section>
+            
         </div>
     );
 };

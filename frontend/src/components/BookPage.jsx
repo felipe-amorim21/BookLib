@@ -13,8 +13,9 @@ import "./css/BookPage.css";
 import { useUser } from '../context/userContext';
 import { useNavigate } from 'react-router-dom';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
+import { getUserNamebyUserId } from "../service/apiService";
 
-
+// Componente para exibir os detalhes do livro
 const BookDetails = ({ book, isFavorited, handleFavoriteToggle }) => (
   <div className="book-details">
     <h1>{book.title}</h1>
@@ -54,6 +55,7 @@ const BookDetails = ({ book, isFavorited, handleFavoriteToggle }) => (
   </div>
 );
 
+// Componente para exibir o resumo da IA
 const AiReviewCard = ({ aiReview }) => (
   <div className="review-card ai-review">
     <h3>Resumo geral por IA</h3>
@@ -61,7 +63,8 @@ const AiReviewCard = ({ aiReview }) => (
   </div>
 );
 
-const ReviewList = ({ reviews }) => (
+// Componente para exibir a lista de reviews
+const ReviewList = ({ reviews, userNames }) => (
   <div className="review-list">
     <h2>Reviews dos usuários</h2>
     {reviews.length > 0 ? (
@@ -69,6 +72,7 @@ const ReviewList = ({ reviews }) => (
         {reviews.map((review) => (
           <li key={review.id} className="review-item">
             <h3>{review.review_title}</h3>
+            <h4>Review feito por {userNames[review.user_id] || 'Carregando...'}</h4>
             <p>
               <strong>Avaliação Geral:</strong> {review.overall_rating.toFixed(2)}
             </p>
@@ -101,15 +105,16 @@ const BookPage = () => {
   const [aiReview, setAiReview] = useState(null);
   const [isFavorited, setIsFavorited] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [userNames, setUserNames] = useState({});
   const { userData, error } = useUser();
   const navigate = useNavigate();
   console.log("userauth: ", userData);
 
   useEffect(() => {
-
     if(!userData){
       return;
     }
+    
     const fetchBookAndReviews = async () => {
       try {
         const bookData = await getBookByGoogleId(bookId);
@@ -124,6 +129,16 @@ const BookPage = () => {
         // Verifica se o livro já está favoritado
         const favoriteStatus = await checkIfBookIsFavorited(bookData.id, userData);
         setIsFavorited(favoriteStatus.isFavorito);
+
+        // Carregar os nomes dos usuários
+        const names = {};
+        for (const review of reviewsData) {
+          if (!names[review.user_id]) {
+            const userName = await getUserNamebyUserId(review.user_id);
+            names[review.user_id] = userName || 'Desconhecido';
+          }
+        }
+        setUserNames(names);
       } catch (error) {
         console.error("Erro ao buscar detalhes do livro e reviews:", error);
       } finally {
@@ -132,7 +147,7 @@ const BookPage = () => {
     };
 
     fetchBookAndReviews();
-  }, [bookId,userData]);
+  }, [bookId, userData]);
 
   const handleFavoriteToggle = async () => {
     if (isFavorited) {
@@ -164,16 +179,17 @@ const BookPage = () => {
             handleFavoriteToggle={handleFavoriteToggle}
           />
           <button
-                                    className="review-btn"
-                                    onClick={(e) => handleReviewClick(e, book)}
-                                >
-                                    Escrever Review
-                                </button>
+            className="review-btn"
+            onClick={(e) => handleReviewClick(e, book)}
+          >
+            Escrever Review
+          </button>
 
           {/* Exibe o resumo da IA se existir */}
           {aiReview && <AiReviewCard aiReview={aiReview} />}
 
-          <ReviewList reviews={reviews} />
+          {/* Passa os nomes dos usuários como prop */}
+          <ReviewList reviews={reviews} userNames={userNames} />
         </>
       ) : (
         <p>Livro não encontrado.</p>

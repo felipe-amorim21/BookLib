@@ -51,8 +51,10 @@ export const LoginForm = () => {
 
             const data = await response.json();
             setCookie("access_token", data.access_token, { path: "/", secure: true, sameSite: "Strict" });
-            alert("Login realizado com sucesso!");
-            navigate("/books");
+            //alert("Login realizado com sucesso!");
+            //navigate("/books");
+            navigate("/home");
+            window.location.reload();
 
         } catch (err) {
             console.error("Erro no login:", err);

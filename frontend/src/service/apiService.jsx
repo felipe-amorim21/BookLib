@@ -35,6 +35,17 @@ export const searchBooks = async (query) => {
       return [];
     }
   };
+
+
+  export const getUserNamebyUserId = async (userId) => {
+    try {
+      const response = await api.get(`/users/${userId}`);
+      return response.data.email;
+    } catch (error) {
+      console.error('Erro ao buscar usuario:', error);
+      return [];
+    }
+  }
   
   export const saveBookIfNotExist = async (book) => {
     console.log("livro: ", book);
