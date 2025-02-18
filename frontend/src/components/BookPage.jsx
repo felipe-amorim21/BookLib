@@ -64,39 +64,57 @@ const AiReviewCard = ({ aiReview }) => (
 );
 
 // Componente para exibir a lista de reviews
-const ReviewList = ({ reviews, userNames }) => (
-  <div className="review-list">
-    <h2>Reviews dos usuários</h2>
-    {reviews.length > 0 ? (
-      <ul>
-        {reviews.map((review) => (
-          <li key={review.id} className="review-item">
-            <h3>{review.review_title}</h3>
-            <h4>Review feito por {userNames[review.user_id] || 'Carregando...'}</h4>
-            <p>
-              <strong>Avaliação Geral:</strong> {review.overall_rating.toFixed(2)}
-            </p>
-            <p>
-              <strong>História:</strong> {review.story_rating}
-            </p>
-            <p>
-              <strong>Escrita:</strong> {review.style_rating}
-            </p>
-            <p>
-              <strong>Personagens:</strong> {review.character_rating}
-            </p>
-            <p>
-              <strong>Recomenda?</strong> {review.recommendation ? "Sim" : "Não"}
-            </p>
-            <p>{review.review}</p>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <p>Este livro ainda não possui reviews.</p>
-    )}
-  </div>
-);
+const ReviewList = ({ reviews, userNames, userData, onDeleteReview }) => {
+  const navigate = useNavigate();
+
+  const handleEditReview = (reviewId) => {
+    navigate(`/review/${reviewId}`);
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    const confirmDelete = window.confirm("Tem certeza que deseja excluir este review?");
+    if (confirmDelete) {
+      try {
+        await deleteReviewById(reviewId);
+        onDeleteReview(reviewId);
+      } catch (error) {
+        console.error("Erro ao deletar review:", error);
+      }
+    }
+  };
+
+  return (
+    <div className="review-list">
+      <h2>Reviews dos usuários</h2>
+      {reviews.length > 0 ? (
+        <ul>
+          {reviews.map((review) => (
+            <li key={review.id} className="review-item">
+              <h3>{review.review_title}</h3>
+              <h4>Review feito por {userNames[review.user_id] || 'Carregando...'}</h4>
+              <p><strong>Avaliação Geral:</strong> {review.overall_rating.toFixed(2)}</p>
+              <p><strong>História:</strong> {review.story_rating}</p>
+              <p><strong>Escrita:</strong> {review.style_rating}</p>
+              <p><strong>Personagens:</strong> {review.character_rating}</p>
+              <p><strong>Recomenda?</strong> {review.recommendation ? "Sim" : "Não"}</p>
+              <p>{review.review}</p>
+
+              {/* Botões Editar/Deletar apenas se o usuário for o autor */}
+              {userData?.id === review.user_id && (
+                <div className="review-actions">
+                  <button className="edit-btn" onClick={() => handleEditReview(review.id)}>Editar</button>
+                  <button className="delete-btn" onClick={() => handleDeleteReview(review.id)}>Deletar</button>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>Este livro ainda não possui reviews.</p>
+      )}
+    </div>
+  );
+};
 
 const BookPage = () => {
   const { bookId } = useParams();
